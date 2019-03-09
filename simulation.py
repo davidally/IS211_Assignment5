@@ -98,18 +98,21 @@ def simulateOneServer(url):
         new_request = Request(int(row[0]), int(row[2]))
         server_queue.enqueue(new_request)
 
-    # Check queue has items
-    queue_has_tasks = True if server_queue.items else False
-
-    # Server will process the queue
+    waiting_times = []
+    total_seconds = 0
     while server_running:
-        if queue_has_tasks and not single_server.busy():
+        if (not server_queue.is_empty()) and (not single_server.busy()):
             process_item = server_queue.dequeue()
+            waiting_times.append(process_item.wait_time(total_seconds))
             single_server.start_next(process_item)
 
         single_server.tick()
+        total_seconds += 1
+        if server_queue.is_empty():
+            break
 
-    return 'lol'
+    avg_wait = sum(waiting_times) // len(waiting_times)
+    return 'The avg wait time is {}'.format(avg_wait)
 
 
 def main():
