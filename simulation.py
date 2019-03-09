@@ -66,8 +66,9 @@ class Request(object):
 
 def processRequests(file):
 
-    response = urllib2.urlopen(file)
-    parsed_data = csv.reader(response)
+    response = urllib2.Request(file)
+    raw_data = urllib2.urlopen(response)
+    parsed_data = csv.reader(raw_data)
 
     init_list = []
 
@@ -78,8 +79,6 @@ def processRequests(file):
 
 
 def simulateOneServer(url):
-
-    # URL = 'http://s3.amazonaws.com/cuny-is211-spring2015/requests.csv'
 
     # Initialize Server and Queue
     single_server = Server()
@@ -96,7 +95,7 @@ def simulateOneServer(url):
     # Grab requests and load into queue
     requests = processRequests(url)
     for row in requests:
-        new_request = Request(row[0], row[2])
+        new_request = Request(int(row[0]), int(row[2]))
         server_queue.enqueue(new_request)
 
     # Check queue has items
@@ -108,18 +107,19 @@ def simulateOneServer(url):
             process_item = server_queue.dequeue()
             single_server.start_next(process_item)
 
-        # single_server.tick()
+        single_server.tick()
 
-    return
+    return 'lol'
 
 
 def main():
-    parse = argparse.ArgumentParser()
-    parse.add_argument('--file', action='store', type=str,
-                       help='Enter valid link to CSV file.')
-    args = parse.parse_args()
+    # parse = argparse.ArgumentParser()
+    # parse.add_argument('--file', action='store', type=str,
+    #                    help='Enter valid link to CSV file.')
+    # args = parse.parse_args()
 
-    simulateOneServer(args.file)
+    simulateOneServer(
+        'http://s3.amazonaws.com/cuny-is211-spring2015/requests.csv')
 
 
 if __name__ == '__main__':
