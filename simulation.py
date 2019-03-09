@@ -5,6 +5,7 @@ import urllib2
 import csv
 import random
 import argparse
+import decimal
 
 
 class Queue(object):
@@ -49,9 +50,9 @@ class Server(object):
 
 class Request(object):
 
-    def __init__(self, time, prnttime):
+    def __init__(self, time, process_time):
         self.timestamp = time
-        self.request_time = prnttime
+        self.request_time = process_time
 
     def get_stamp(self):
         return self.timestamp
@@ -61,3 +62,60 @@ class Request(object):
 
     def wait_time(self, current_time):
         return current_time - self.timestamp
+
+
+def processRequests(file):
+
+    response = urllib2.urlopen(file)
+    parsed_data = csv.reader(response)
+
+    init_list = []
+
+    for row in parsed_data:
+        init_list.append(row)
+
+    return init_list
+
+
+def simulateOneServer():
+
+    URL = 'http://s3.amazonaws.com/cuny-is211-spring2015/requests.csv'
+
+    single_server = Server()
+    server_queue = Queue()
+    # Check if server is up
+    try:
+        if single_server:
+            server_running = True
+    except Exception:
+        print 'Server is not running.'
+        return
+
+    # Grab requests
+    requests = processRequests(URL)
+
+    # Load requests into server queue
+    for row in requests:
+        new_request = Request(row[0], row[2])
+        server_queue.enqueue(new_request)
+
+    queue_has_tasks = True if server_queue.items else False
+    # Server will process the queue
+    while server_running:
+        if queue_has_tasks == True and not single_server.busy():
+            process_item = server_queue.dequeue()
+            single_server.start_next(process_item)
+
+    return
+
+
+simulateOneServer()
+
+
+# def main():
+
+#     req_file = 'test'
+
+
+# if __name__ == '__main__':
+#     main()
