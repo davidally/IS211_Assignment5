@@ -5,7 +5,7 @@ import urllib2
 import csv
 import random
 import argparse
-import decimal
+from decimal import Decimal
 
 
 class Queue(object):
@@ -111,8 +111,8 @@ def simulateOneServer(url):
         if server_queue.is_empty():
             break
 
-    avg_wait = sum(waiting_times) // len(waiting_times)
-    return 'The avg wait time is {}'.format(avg_wait)
+    avg_wait = Decimal(sum(waiting_times)) / Decimal(len(waiting_times))
+    print 'The avg wait time is {} seconds'.format(avg_wait)
 
 
 def main():
