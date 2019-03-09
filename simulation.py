@@ -77,45 +77,50 @@ def processRequests(file):
     return init_list
 
 
-def simulateOneServer():
+def simulateOneServer(url):
 
-    URL = 'http://s3.amazonaws.com/cuny-is211-spring2015/requests.csv'
+    # URL = 'http://s3.amazonaws.com/cuny-is211-spring2015/requests.csv'
 
+    # Initialize Server and Queue
     single_server = Server()
     server_queue = Queue()
+
     # Check if server is up
     try:
         if single_server:
             server_running = True
     except Exception:
-        print 'Server is not running.'
+        print 'Server is not functioning correctly.'
         return
 
-    # Grab requests
-    requests = processRequests(URL)
-
-    # Load requests into server queue
+    # Grab requests and load into queue
+    requests = processRequests(url)
     for row in requests:
         new_request = Request(row[0], row[2])
         server_queue.enqueue(new_request)
 
+    # Check queue has items
     queue_has_tasks = True if server_queue.items else False
+
     # Server will process the queue
     while server_running:
-        if queue_has_tasks == True and not single_server.busy():
+        if queue_has_tasks and not single_server.busy():
             process_item = server_queue.dequeue()
             single_server.start_next(process_item)
+
+        # single_server.tick()
 
     return
 
 
-simulateOneServer()
+def main():
+    parse = argparse.ArgumentParser()
+    parse.add_argument('--file', action='store', type=str,
+                       help='Enter valid link to CSV file.')
+    args = parse.parse_args()
+
+    simulateOneServer(args.file)
 
 
-# def main():
-
-#     req_file = 'test'
-
-
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
