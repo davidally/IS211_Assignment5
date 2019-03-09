@@ -92,37 +92,39 @@ def simulateOneServer(url):
         print 'Server is not functioning correctly.'
         return
 
-    # Grab requests and load into queue
+    # Grab requests
     requests = processRequests(url)
+
+    time_now = 0
+    # Load into Queue
     for row in requests:
         new_request = Request(int(row[0]), int(row[2]))
         server_queue.enqueue(new_request)
 
     waiting_times = []
-    total_seconds = 0
     while server_running:
         if (not server_queue.is_empty()) and (not single_server.busy()):
             process_item = server_queue.dequeue()
-            waiting_times.append(process_item.wait_time(total_seconds))
+            waiting_times.append(process_item.wait_time(time_now))
             single_server.start_next(process_item)
 
         single_server.tick()
-        total_seconds += 1
+        time_now += 1
+
         if server_queue.is_empty():
             break
 
     avg_wait = Decimal(sum(waiting_times)) / Decimal(len(waiting_times))
-    print 'The avg wait time is {} seconds'.format(avg_wait)
+    print 'The average wait time is {} seconds'.format(avg_wait)
 
 
 def main():
-    # parse = argparse.ArgumentParser()
-    # parse.add_argument('--file', action='store', type=str,
-    #                    help='Enter valid link to CSV file.')
-    # args = parse.parse_args()
+    parse = argparse.ArgumentParser()
+    parse.add_argument('--file', action='store', type=str,
+                       help='Enter valid link to CSV file.')
+    args = parse.parse_args()
 
-    simulateOneServer(
-        'http://s3.amazonaws.com/cuny-is211-spring2015/requests.csv')
+    simulateOneServer(args.file)
 
 
 if __name__ == '__main__':
