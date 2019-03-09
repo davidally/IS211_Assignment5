@@ -9,6 +9,10 @@ from decimal import Decimal
 
 
 class Queue(object):
+    """
+    Defining Queue abstract data type.
+    """
+
     def __init__(self):
         self.items = []
 
@@ -26,6 +30,9 @@ class Queue(object):
 
 
 class Server(object):
+    """
+    Creates a simulation of a printing server.
+    """
 
     def __init__(self):
         self.current_task = None
@@ -49,6 +56,9 @@ class Server(object):
 
 
 class Request(object):
+    """
+    Creates a simulated printer task.
+    """
 
     def __init__(self, time, process_time):
         self.timestamp = time
@@ -65,6 +75,14 @@ class Request(object):
 
 
 def processRequests(file):
+    """Pulls data from a CSV file and makes it more usable.
+
+    Args:
+        file (str): Link to a valid CSV file.
+
+    Returns:
+        list: A list of arrays.
+    """
 
     response = urllib2.Request(file)
     raw_data = urllib2.urlopen(response)
@@ -79,6 +97,13 @@ def processRequests(file):
 
 
 def simulateOneServer(url):
+    """This will process a CSV file and transform each line
+    into a Request object. This request will then be loaded
+    into a queue for a simulated server to process. 
+
+    Args:
+        url (str): A link to a valid CSV file. 
+    """
 
     # Initialize Server and Queue
     single_server = Server()
