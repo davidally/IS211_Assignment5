@@ -118,8 +118,8 @@ def simulateOneServer(url):
 
     # Grab requests
     requests = processRequests(url)
-
     time_now = 8
+
     # Load into Queue
     for row in requests:
         new_request = Request(int(row[0]), int(row[2]))
@@ -154,7 +154,7 @@ def main():
     parse.add_argument('--file', action='store', type=str,
                        help='Enter valid link to CSV file.')
     parse.add_argument('-s', '--servers', action='store',
-                       required=False, help='Enter number of servers to simulate')
+                       type=int, required=False, help='Enter number of servers to simulate')
     args = parse.parse_args()
 
     if args.servers is not None:
