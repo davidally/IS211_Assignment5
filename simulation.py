@@ -144,7 +144,16 @@ def simulateOneServer(url):
     return avg_wait
 
 
-def simulateManyServers(servers_num):
+def simulateManyServers(url, servers_num):
+
+    # Generate and package servers and queues
+    total_servers = [Server() for _ in range(servers_num)]
+    total_queues = [Queue() for _ in range(servers_num)]
+    servers_config = zip(total_servers, total_queues)
+
+    # Grab requests
+    requests = processRequests(url)
+
     # Just testing argparse
     print 'There are {} servers!'.format(servers_num)
 
@@ -158,7 +167,7 @@ def main():
     args = parse.parse_args()
 
     if args.servers is not None:
-        simulateManyServers(args.servers)
+        simulateManyServers(args.file, args.servers)
     else:
         simulateOneServer(args.file)
 
