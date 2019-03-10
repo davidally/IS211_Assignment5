@@ -111,8 +111,7 @@ def simulateOneServer(url):
 
     # Check if server is up
     try:
-        if single_server:
-            server_running = True
+        server_running = True if single_server else False
     except Exception:
         print 'Server is not functioning correctly.'
         return
@@ -120,7 +119,7 @@ def simulateOneServer(url):
     # Grab requests
     requests = processRequests(url)
 
-    time_now = 0
+    time_now = 8
     # Load into Queue
     for row in requests:
         new_request = Request(int(row[0]), int(row[2]))
@@ -139,7 +138,8 @@ def simulateOneServer(url):
         if server_queue.is_empty():
             break
 
-    avg_wait = Decimal(sum(waiting_times)) / Decimal(len(waiting_times))
+    avg_wait = time_now / (Decimal(sum(waiting_times)) /
+                           Decimal(len(waiting_times)))
     print 'The average wait time is {} seconds'.format(avg_wait)
 
 
