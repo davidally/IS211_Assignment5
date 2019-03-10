@@ -141,15 +141,26 @@ def simulateOneServer(url):
     avg_wait = time_now / (Decimal(sum(waiting_times)) /
                            Decimal(len(waiting_times)))
     print 'The average wait time is {} seconds'.format(avg_wait)
+    return avg_wait
+
+
+def simulateManyServers(servers_num):
+    # Just testing argparse
+    print 'There are {} servers!'.format(servers_num)
 
 
 def main():
     parse = argparse.ArgumentParser()
     parse.add_argument('--file', action='store', type=str,
                        help='Enter valid link to CSV file.')
+    parse.add_argument('-s', '--servers', action='store',
+                       required=False, help='Enter number of servers to simulate')
     args = parse.parse_args()
 
-    simulateOneServer(args.file)
+    if args.servers is not None:
+        simulateManyServers(args.servers)
+    else:
+        simulateOneServer(args.file)
 
 
 if __name__ == '__main__':
