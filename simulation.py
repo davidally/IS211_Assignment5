@@ -150,11 +150,20 @@ def simulateManyServers(url, servers_num):
     total_servers = [Server() for _ in range(servers_num)]
     total_queues = [Queue() for _ in range(servers_num)]
     servers_config = zip(total_servers, total_queues)
+    server_counter = 0
 
     # Grab requests
     requests = processRequests(url)
 
-    # Just testing argparse
+    # Load requests into queue
+    for request in requests:
+        servers_config[server_counter][1].enqueue(request)
+        if server_counter < (servers_num - 1):
+            server_counter += 1
+        else:
+            server_counter = 0
+
+        # Just testing argparse
     print 'There are {} servers!'.format(servers_num)
 
 
