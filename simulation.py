@@ -150,21 +150,48 @@ def simulateManyServers(url, servers_num):
     total_servers = [Server() for _ in range(servers_num)]
     total_queues = [Queue() for _ in range(servers_num)]
     servers_config = zip(total_servers, total_queues)
-    server_counter = 0
+    test = True
 
     # Grab requests
     requests = processRequests(url)
 
     # Load requests into queue
+    server_counter = 0
     for request in requests:
-        servers_config[server_counter][1].enqueue(request)
+        new_request = Request(int(request[0]), int(request[2]))
+        servers_config[server_counter][1].enqueue(new_request)
         if server_counter < (servers_num - 1):
             server_counter += 1
         else:
             server_counter = 0
 
-        # Just testing argparse
-    print 'There are {} servers!'.format(servers_num)
+    # Processing server queues
+    server_averages = []
+    for server in servers_config:
+        time_now = 0
+        waiting_times = []
+        while test:
+            if (not server[1].is_empty()) and (not server[0].busy()):
+                process_item = server[1].dequeue()
+                waiting_times.append(process_item.wait_time(time_now))
+                server[0].start_next(process_item)
+
+            server[0].tick()
+            time_now += 1
+
+            if server[1].is_empty():
+                break
+
+        avg_wait = time_now / \
+            (Decimal(sum(waiting_times)) / Decimal(len(waiting_times)))
+        server_averages.append(avg_wait)
+
+    total_averages = Decimal(sum(server_averages)) / \
+        Decimal(len(server_averages))
+
+    # Just testing argparse
+    print 'There are {} servers! The average processing time of these servers is {}'.format(
+        servers_num, total_averages)
 
 
 def main():
