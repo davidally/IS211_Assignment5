@@ -198,7 +198,7 @@ def simulateManyServers(url, servers_num):
         Decimal(len(server_averages))
 
     # Just testing argparse
-    print 'There are {} servers! The average processing time of these servers is {}'.format(
+    print 'There are {} servers! The average processing time of these servers is {} seconds'.format(
         servers_num, total_averages)
 
 
