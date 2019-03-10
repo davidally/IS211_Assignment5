@@ -140,11 +140,19 @@ def simulateOneServer(url):
 
     avg_wait = time_now / (Decimal(sum(waiting_times)) /
                            Decimal(len(waiting_times)))
-    print 'The average wait time is {} seconds'.format(avg_wait)
+    print 'The average wait time of one server is {} seconds'.format(avg_wait)
     return avg_wait
 
 
 def simulateManyServers(url, servers_num):
+    """This will mimic simulateOneServer but for many different servers.
+    The requests will be split among these servers in a round-robin fashion
+    and processed to return the average time of these servers. 
+
+    Args:
+        url (string): A link to a valid CSV file.
+        servers_num (int): The amount of servers you want to simulate. 
+    """
 
     # Generate and package servers and queues
     total_servers = [Server() for _ in range(servers_num)]
